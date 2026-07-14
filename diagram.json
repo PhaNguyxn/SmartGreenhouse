@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "author": "Smart Greenhouse Project",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": -14.5,
+      "left": -24.2,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -134.1,
+      "left": -149.4,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr1",
+      "top": -131.2,
+      "left": -18.4,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot1",
+      "top": -78.1,
+      "left": -249.8,
+      "attrs": { "value": "50" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "fanLed",
+      "top": -120,
+      "left": 250,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "pumpLed",
+      "top": -22.8,
+      "left": 272.6,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "lightLed",
+      "top": 92.4,
+      "left": 311,
+      "attrs": { "color": "yellow" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": -53.65,
+      "left": 182.4,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 42.35,
+      "left": 201.6,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": 157.55,
+      "left": 182.4,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "board-ssd1306",
+      "id": "oled1",
+      "top": 243.14,
+      "left": -28.57,
+      "attrs": { "i2cAddress": "0x3c" }
+    }
+  ],
+  "connections": [
+    ["esp:3V3", "dht1:VCC", "red", []],
+    ["esp:GND.1", "dht1:GND", "black", []],
+    ["esp:3V3", "ldr1:VCC", "red", []],
+    ["esp:GND.2", "ldr1:GND", "black", []],
+    ["esp:3V3", "pot1:VCC", "red", []],
+    ["esp:GND.3", "pot1:GND", "black", []],
+    ["r1:2", "fanLed:A", "green", []],
+    ["esp:27", "r2:1", "green", []],
+    ["r2:2", "pumpLed:A", "green", []],
+    ["esp:2", "r3:1", "green", []],
+    ["r3:2", "lightLed:A", "green", []],
+    ["dht1:SDA", "esp:D4", "green", ["v0"]],
+    ["pot1:GND", "esp:GND.2", "black", ["v0"]],
+    ["pot1:SIG", "esp:D34", "green", ["v0"]],
+    ["ldr1:AO", "esp:D35", "green", ["h0"]],
+    ["fanLed:C", "esp:GND.1", "black", ["v0"]],
+    ["pumpLed:C", "esp:GND.1", "black", ["v0"]],
+    ["lightLed:C", "esp:GND.1", "black", ["v0"]],
+    ["oled1:GND", "esp:GND.2", "black", ["v0"]],
+    ["oled1:VCC", "esp:3V3", "red", ["v0"]],
+    ["oled1:SCL", "esp:D22", "green", ["v0"]],
+    ["oled1:SDA", "esp:D21", "green", ["v0"]],
+    ["r1:1", "esp:D26", "green", ["v0"]],
+    ["r2:1", "esp:D27", "green", ["v48", "h-220.8"]],
+    ["r3:1", "esp:D2", "green", ["v0"]]
+  ],
+  "dependencies": {}
+}
