@@ -8,7 +8,7 @@ GreenhouseData greenhouse =
     0,
     0,
 
-    false,
+    true,
 
     false,
     false,

@@ -1,29 +1,31 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-//SENSOR PIN
-
+// Các chân điều khiển
 #define DHT_PIN         4
 #define DHT_TYPE        DHT22
 
 #define SOIL_PIN        34
 #define LIGHT_PIN       35
-
-//OUTPUT PIN
-
 #define FAN_PIN         26
 #define PUMP_PIN        27
 #define GROWLIGHT_PIN   2
 
-//AUTO MODE
+// Quạt: điều khiển theo nhiệt độ
+constexpr float TEMP_FAN_ON  = 30.0f;
+constexpr float TEMP_FAN_OFF = 27.0f;
 
-#define TEMP_LIMIT      30
+// Quạt: điều khiển theo độ ẩm không khí
+constexpr float HUMIDITY_FAN_ON  = 80.0f;
+constexpr float HUMIDITY_FAN_OFF = 70.0f;
 
-#define SOIL_LIMIT      40
+// Máy bơm: điều khiển theo độ ẩm đất
+constexpr int SOIL_PUMP_ON  = 35;
+constexpr int SOIL_PUMP_OFF = 55;
 
-#define LIGHT_LIMIT     30
-
-//OLED
+// Đèn: điều khiển theo ánh sáng 0–100%
+constexpr int LIGHT_GROW_ON  = 30;
+constexpr int LIGHT_GROW_OFF = 50;
 
 #define SCREEN_WIDTH    128
 #define SCREEN_HEIGHT   64
@@ -39,6 +41,5 @@
 #define MQTT_CLIENT_ID "ESP32_GREENHOUSE"
 
 #define MQTT_SUB_TOPIC "greenhouse/control"
-
 
 #endif

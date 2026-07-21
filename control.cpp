@@ -7,42 +7,70 @@
 
 void initOutputs()
 {
-    pinMode(FAN_PIN,OUTPUT);
+    pinMode(FAN_PIN, OUTPUT);
+    pinMode(PUMP_PIN, OUTPUT);
+    pinMode(GROWLIGHT_PIN, OUTPUT);
 
-    pinMode(PUMP_PIN,OUTPUT);
+    greenhouse.fan = false;
+    greenhouse.pump = false;
+    greenhouse.lightState = false;
 
-    pinMode(GROWLIGHT_PIN,OUTPUT);
-
-    digitalWrite(FAN_PIN,LOW);
-
-    digitalWrite(PUMP_PIN,LOW);
-
-    digitalWrite(GROWLIGHT_PIN,LOW);
+    digitalWrite(FAN_PIN, LOW);
+    digitalWrite(PUMP_PIN, LOW);
+    digitalWrite(GROWLIGHT_PIN, LOW);
 }
 
 void autoControl()
 {
-    if(!greenhouse.autoMode)
+    if (!greenhouse.autoMode)
+    {
         return;
+    }
 
-    greenhouse.fan =
-        greenhouse.temperature > TEMP_LIMIT;
+    if (greenhouse.temperature >= TEMP_FAN_ON ||
+        greenhouse.humidity >= HUMIDITY_FAN_ON)
+    {
+        greenhouse.fan = true;
+    }
+    else if (greenhouse.temperature <= TEMP_FAN_OFF &&
+             greenhouse.humidity <= HUMIDITY_FAN_OFF)
+    {
+        greenhouse.fan = false;
+    }
 
-    greenhouse.pump =
-        greenhouse.soil < SOIL_LIMIT;
+    if (greenhouse.soil <= SOIL_PUMP_ON)
+    {
+        greenhouse.pump = true;
+    }
+    else if (greenhouse.soil >= SOIL_PUMP_OFF)
+    {
+        greenhouse.pump = false;
+    }
 
-    greenhouse.lightState =
-        greenhouse.light < LIGHT_LIMIT;
+    if (greenhouse.light < LIGHT_GROW_ON)
+    {
+        greenhouse.lightState = true;
+    }
+    else if (greenhouse.light > LIGHT_GROW_OFF)
+    {
+        greenhouse.lightState = false;
+    }
 }
 
 void updateOutputs()
 {
-    digitalWrite(FAN_PIN,
-                 greenhouse.fan);
+    digitalWrite(
+        FAN_PIN,
+        greenhouse.fan ? HIGH : LOW
+    );
 
-    digitalWrite(PUMP_PIN,
-                 greenhouse.pump);
+    digitalWrite(
+        PUMP_PIN,
+        greenhouse.pump ? HIGH : LOW
+    );
 
-    digitalWrite(GROWLIGHT_PIN,
-                 greenhouse.lightState);
+    digitalWrite(
+        GROWLIGHT_PIN,
+        greenhouse.lightState ? HIGH : LOW
+    );
 }

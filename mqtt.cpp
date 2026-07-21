@@ -3,8 +3,10 @@
 
 #include "config.h"
 #include "globals.h"
+#include "control.h"
 
 void callback(char* topic, byte* payload, unsigned int length);
+void publishDeviceStates();
 
 PubSubClient mqttClient(espClient);
 
@@ -12,14 +14,26 @@ void reconnectMQTT()
 {
     while (!mqttClient.connected())
     {
-        mqttClient.connect(MQTT_CLIENT_ID);
+        Serial.print("Connecting to MQTT...");
 
-        mqttClient.subscribe("greenhouse/control/fan");
-        mqttClient.subscribe("greenhouse/control/pump");
-        mqttClient.subscribe("greenhouse/control/light");
-        mqttClient.subscribe("greenhouse/control/auto");
+        if (mqttClient.connect(MQTT_CLIENT_ID))
+        {
+            Serial.println(" connected");
 
-        delay(1000);
+            mqttClient.subscribe("greenhouse/control/fan");
+            mqttClient.subscribe("greenhouse/control/pump");
+            mqttClient.subscribe("greenhouse/control/light");
+            mqttClient.subscribe("greenhouse/control/auto");
+
+            publishDeviceStates();
+        }
+        else
+        {
+            Serial.print(" failed, state = ");
+            Serial.println(mqttClient.state());
+
+            delay(2000);
+        }
     }
 }
 
@@ -29,89 +43,134 @@ void initMQTT()
     mqttClient.setCallback(callback);
 }
 
-void publishData()
+
+void publishDeviceStates()
 {
     if (!mqttClient.connected())
-        reconnectMQTT();
-
-    mqttClient.loop();
-
-    mqttClient.publish(
-        "greenhouse/temp",
-        String(greenhouse.temperature).c_str());
+    {
+        return;
+    }
 
     mqttClient.publish(
-        "greenhouse/humidity",
-        String(greenhouse.humidity).c_str());
-
-    mqttClient.publish(
-        "greenhouse/light",
-        String(greenhouse.light).c_str());
-
-    mqttClient.publish(
-        "greenhouse/soil",
-        String(greenhouse.soil).c_str());
-
-    mqttClient.publish(
-        "greenhouse/fan",
-        greenhouse.fan ? "1" : "0");
-
-    mqttClient.publish(
-        "greenhouse/pump",
-        greenhouse.pump ? "1" : "0");
-
-    mqttClient.publish(
-        "greenhouse/lightState",
-        greenhouse.lightState ? "1" : "0");
-
-    mqttClient.publish(
-    "greenhouse/status/fan",
-    greenhouse.fan ? "1":"0");
+        "greenhouse/status/fan",
+        greenhouse.fan ? "1" : "0",
+        true
+    );
 
     mqttClient.publish(
         "greenhouse/status/pump",
-        greenhouse.pump ? "1":"0");
+        greenhouse.pump ? "1" : "0",
+        true
+    );
 
     mqttClient.publish(
         "greenhouse/status/light",
-        greenhouse.lightState ? "1":"0");
+        greenhouse.lightState ? "1" : "0",
+        true
+    );
 
     mqttClient.publish(
-    "greenhouse/auto",
-    greenhouse.autoMode ? "1" : "0");
+        "greenhouse/status/auto",
+        greenhouse.autoMode ? "1" : "0",
+        true
+    );
 }
+
+
+void publishData()
+{
+    if (!mqttClient.connected())
+    {
+        reconnectMQTT();
+    }
+
+    mqttClient.publish(
+        "greenhouse/temp",
+        String(greenhouse.temperature, 1).c_str()
+    );
+
+    mqttClient.publish(
+        "greenhouse/humidity",
+        String(greenhouse.humidity, 1).c_str()
+    );
+
+    mqttClient.publish(
+        "greenhouse/light",
+        String(greenhouse.light).c_str()
+    );
+
+    mqttClient.publish(
+        "greenhouse/soil",
+        String(greenhouse.soil).c_str()
+    );
+
+    publishDeviceStates();
+}
+
 
 void callback(char* topic, byte* payload, unsigned int length)
 {
-    String msg = "";
+    String message;
 
-    for (int i = 0; i < length; i++)
+    for (unsigned int i = 0; i < length; i++)
     {
-        msg += (char)payload[i];
+        message += static_cast<char>(payload[i]);
     }
 
-    if(String(topic)=="greenhouse/control/fan")
-    {
-        if(greenhouse.autoMode)
-            return;
+    message.trim();
 
-        greenhouse.fan = (msg=="1");
+    String receivedTopic = String(topic);
+
+    Serial.print("MQTT received: ");
+    Serial.print(receivedTopic);
+    Serial.print(" = ");
+    Serial.println(message);
+
+   
+    if (receivedTopic == "greenhouse/control/auto")
+    {
+        greenhouse.autoMode = (message == "1");
+
+        if (greenhouse.autoMode)
+        {
+            autoControl();
+        }
+
+        updateOutputs();
+
+        publishDeviceStates();
+
+        return;
     }
 
-    if (String(topic) == "greenhouse/control/pump")
+    if (greenhouse.autoMode)
     {
-        greenhouse.pump = (msg == "1");
-        digitalWrite(PUMP_PIN, greenhouse.pump);
+        Serial.println(
+            "Manual command ignored because Auto Mode is ON"
+        );
+
+        publishDeviceStates();
+        return;
     }
 
-    if (String(topic) == "greenhouse/control/light")
+    if (receivedTopic == "greenhouse/control/fan")
     {
-        greenhouse.lightState = (msg == "1");
-        digitalWrite(GROWLIGHT_PIN, greenhouse.lightState);
+        greenhouse.fan = (message == "1");
+    }
+    else if (receivedTopic == "greenhouse/control/pump")
+    {
+        greenhouse.pump = (message == "1");
+    }
+    else if (receivedTopic == "greenhouse/control/light")
+    {
+        greenhouse.lightState = (message == "1");
+    }
+    else
+    {
+        return;
     }
 
-    if(String(topic)=="greenhouse/control/auto")
-    {
-        greenhouse.autoMode = (msg=="1");
-    }
+    updateOutputs();
+
+    publishDeviceStates();
 }
