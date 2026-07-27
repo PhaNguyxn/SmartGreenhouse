@@ -4,7 +4,6 @@ Hệ thống giám sát và điều khiển nhà kính thông minh sử dụng *
 
 Dự án mô phỏng một hệ thống IoT có khả năng theo dõi nhiệt độ, độ ẩm không khí, độ ẩm đất và cường độ ánh sáng. ESP32 có thể tự động điều khiển quạt, máy bơm và đèn trồng cây theo các ngưỡng thiết lập, đồng thời cho phép người dùng điều khiển thủ công từ giao diện Node-RED.
 
-
 ## 📖 Giới thiệu
 
 Smart Greenhouse là mô hình nhà kính thông minh được xây dựng nhằm:
@@ -94,24 +93,24 @@ Luồng hoạt động chính:
 
 ### Phần cứng mô phỏng
 
-| Thành phần | Chức năng |
-|---|---|
-| ESP32 DevKit V1 | Bộ điều khiển trung tâm |
-| DHT22 | Đo nhiệt độ và độ ẩm không khí |
-| Soil Moisture Sensor | Đo độ ẩm đất |
-| LDR/Light Sensor | Đo cường độ ánh sáng |
-| OLED SSD1306 128×64 | Hiển thị dữ liệu cục bộ |
-| LED/Output mô phỏng | Đại diện cho quạt, bơm và đèn |
+| Thành phần           | Chức năng                      |
+| -------------------- | ------------------------------ |
+| ESP32 DevKit V1      | Bộ điều khiển trung tâm        |
+| DHT22                | Đo nhiệt độ và độ ẩm không khí |
+| Soil Moisture Sensor | Đo độ ẩm đất                   |
+| LDR/Light Sensor     | Đo cường độ ánh sáng           |
+| OLED SSD1306 128×64  | Hiển thị dữ liệu cục bộ        |
+| LED/Output mô phỏng  | Đại diện cho quạt, bơm và đèn  |
 
 ### Phần mềm và nền tảng
 
-| Công nghệ | Mục đích |
-|---|---|
-| Wokwi | Mô phỏng ESP32 và mạch điện |
-| Arduino Framework | Lập trình ESP32 |
-| MQTT | Giao tiếp thời gian thực |
-| HiveMQ Public Broker | MQTT Broker |
-| Node-RED | Xử lý luồng dữ liệu |
+| Công nghệ            | Mục đích                         |
+| -------------------- | -------------------------------- |
+| Wokwi                | Mô phỏng ESP32 và mạch điện      |
+| Arduino Framework    | Lập trình ESP32                  |
+| MQTT                 | Giao tiếp thời gian thực         |
+| HiveMQ Public Broker | MQTT Broker                      |
+| Node-RED             | Xử lý luồng dữ liệu              |
 | FlowFuse Dashboard 2 | Giao diện giám sát và điều khiển |
 
 ### Thư viện Arduino
@@ -130,16 +129,16 @@ ArduinoJson
 
 ## 🔌 Sơ đồ chân ESP32
 
-| Thiết bị | Chân ESP32 |
-|---|---:|
-| DHT22 | GPIO 4 |
-| Soil Moisture Sensor | GPIO 34 |
-| Light Sensor | GPIO 35 |
-| Fan | GPIO 26 |
-| Water Pump | GPIO 27 |
-| Grow Light | GPIO 2 |
-| OLED SDA | GPIO 21 mặc định |
-| OLED SCL | GPIO 22 mặc định |
+| Thiết bị             |       Chân ESP32 |
+| -------------------- | ---------------: |
+| DHT22                |           GPIO 4 |
+| Soil Moisture Sensor |          GPIO 34 |
+| Light Sensor         |          GPIO 35 |
+| Fan                  |          GPIO 26 |
+| Water Pump           |          GPIO 27 |
+| Grow Light           |           GPIO 2 |
+| OLED SDA             | GPIO 21 mặc định |
+| OLED SCL             | GPIO 22 mặc định |
 
 > Các chân kết nối phải khớp giữa `config.h` và `diagram.json`.
 
@@ -147,11 +146,11 @@ ArduinoJson
 
 ## Nguyên tắc điều khiển tự động
 
-| Thiết bị | Điều kiện bật | Điều kiện tắt |
-|---|---|---|
-| Quạt | Nhiệt độ ≥ 30°C hoặc độ ẩm ≥ 80% | Nhiệt độ ≤ 27°C và độ ẩm ≤ 70% |
-| Máy bơm | Độ ẩm đất ≤ 35% | Độ ẩm đất ≥ 55% |
-| Đèn trồng cây | Ánh sáng < 30% | Ánh sáng > 50% |
+| Thiết bị      | Điều kiện bật                    | Điều kiện tắt                  |
+| ------------- | -------------------------------- | ------------------------------ |
+| Quạt          | Nhiệt độ ≥ 30°C hoặc độ ẩm ≥ 80% | Nhiệt độ ≤ 27°C và độ ẩm ≤ 70% |
+| Máy bơm       | Độ ẩm đất ≤ 35%                  | Độ ẩm đất ≥ 55%                |
+| Đèn trồng cây | Ánh sáng < 30%                   | Ánh sáng > 50%                 |
 
 Hệ thống sử dụng ngưỡng bật và ngưỡng tắt khác nhau để tạo vùng trễ **hysteresis**, giúp hạn chế việc thiết bị bật/tắt liên tục khi giá trị cảm biến dao động gần ngưỡng.
 
@@ -161,30 +160,30 @@ Hệ thống sử dụng ngưỡng bật và ngưỡng tắt khác nhau để t�
 
 ### Sensor Topics
 
-| Topic | Nội dung |
-|---|---|
-| `greenhouse/temp` | Nhiệt độ |
-| `greenhouse/humidity` | Độ ẩm không khí |
-| `greenhouse/soil` | Độ ẩm đất |
-| `greenhouse/light` | Cường độ ánh sáng |
+| Topic                 | Nội dung          |
+| --------------------- | ----------------- |
+| `greenhouse/temp`     | Nhiệt độ          |
+| `greenhouse/humidity` | Độ ẩm không khí   |
+| `greenhouse/soil`     | Độ ẩm đất         |
+| `greenhouse/light`    | Cường độ ánh sáng |
 
 ### Control Topics
 
-| Topic | Nội dung |
-|---|---|
-| `greenhouse/control/fan` | Điều khiển quạt |
-| `greenhouse/control/pump` | Điều khiển máy bơm |
-| `greenhouse/control/light` | Điều khiển đèn |
-| `greenhouse/control/auto` | Bật/tắt Automatic Mode |
+| Topic                      | Nội dung               |
+| -------------------------- | ---------------------- |
+| `greenhouse/control/fan`   | Điều khiển quạt        |
+| `greenhouse/control/pump`  | Điều khiển máy bơm     |
+| `greenhouse/control/light` | Điều khiển đèn         |
+| `greenhouse/control/auto`  | Bật/tắt Automatic Mode |
 
 ### Status Topics
 
-| Topic | Nội dung |
-|---|---|
-| `greenhouse/status/fan` | Trạng thái thực tế của quạt |
-| `greenhouse/status/pump` | Trạng thái thực tế của bơm |
-| `greenhouse/status/light` | Trạng thái thực tế của đèn |
-| `greenhouse/status/auto` | Trạng thái Automatic Mode |
+| Topic                     | Nội dung                    |
+| ------------------------- | --------------------------- |
+| `greenhouse/status/fan`   | Trạng thái thực tế của quạt |
+| `greenhouse/status/pump`  | Trạng thái thực tế của bơm  |
+| `greenhouse/status/light` | Trạng thái thực tế của đèn  |
+| `greenhouse/status/auto`  | Trạng thái Automatic Mode   |
 
 Payload điều khiển:
 
