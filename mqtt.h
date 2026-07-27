@@ -4,8 +4,12 @@
 void initWiFi();
 void initMQTT();
 
+void handleMQTT();
+
 void reconnectMQTT();
 
 void publishData();
+
+void publishDeviceStates();
 
 #endif

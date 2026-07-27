@@ -5,23 +5,40 @@
 #include "wifi.h"
 #include "mqtt.h"
 
+constexpr unsigned long UPDATE_INTERVAL_MS = 2000;
+
+unsigned long lastUpdateTime = 0;
+
 void setup()
 {
     Serial.begin(115200);
 
     initSensors();
-
     initOutputs();
-
     initDisplay();
-
     initWiFi();
-
     initMQTT();
+
 }
 
 void loop()
 {
+
+    handleMQTT();
+
+    unsigned long currentTime = millis();
+
+    if (
+        currentTime - lastUpdateTime <
+        UPDATE_INTERVAL_MS
+    )
+    {
+        delay(10);
+        return;
+    }
+
+    lastUpdateTime = currentTime;
+
     readSensors();
 
     autoControl();
@@ -32,28 +49,4 @@ void loop()
 
     publishData();
 
-    Serial.println("--------------------");
-
-    Serial.print("Temperature : ");
-    Serial.println(greenhouse.temperature);
-
-    Serial.print("Humidity : ");
-    Serial.println(greenhouse.humidity);
-
-    Serial.print("Soil : ");
-    Serial.println(greenhouse.soil);
-
-    Serial.print("Light : ");
-    Serial.println(greenhouse.light);
-
-    Serial.print("Fan : ");
-    Serial.println(greenhouse.fan);
-
-    Serial.print("Pump : ");
-    Serial.println(greenhouse.pump);
-
-    Serial.print("Grow Light : ");
-    Serial.println(greenhouse.lightState);
-
-    delay(2000);
 }
